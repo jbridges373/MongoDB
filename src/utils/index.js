@@ -17,3 +17,7 @@ exports.listFilms = async (collection) => {
         console.log(error);
     }
 };
+
+// Create function for updating database entry
+
+// Create function to delete one more database entries.
