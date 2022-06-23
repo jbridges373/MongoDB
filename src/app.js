@@ -2,45 +2,55 @@ const yargs = require("yargs");
 
 const { connection, client } = require("./db/connection");
 
-const { addFilm, listFilms } = require("./utils");
+const { addFilm, listFilms, updateFilm, deleteFilm } = require("./utils");
 
 // Create and Read
 const app = async (yargsObj) => {
-    const collection = await connection();
-    if (yargsObj.add) {
-        await addFilm(collection, {
-            title: yargsObj.title, 
-            actor: yargsObj.actor,
-            rating: yargsObj.rating
-        });
-        console.log("success, entry added");
-    } else if(yargsObj.list) {
-        await listFilms(collection);
-    }else {
-        console.log("Incorrect command");
-    }
-    await client.close();
-       
-}
+	try {
+		if (yargsObj.add) {
+			// pass to create function
+			await addFilm({
+				title: yargsObj.title,
+				actor: yargsObj.actor,
+				rating: yargsObj.rating,
+			});
+			console.log(await listFilms());
+		} else if (yargsObj.list) {
+			// Pass to read function
+			console.log(await listFilms());
+		} else if (yargsObj.update) {
+			// Build Criteria
+			const criteria = { title: yargsObj.update };
 
-// Update
-async function updateFilmList(yargsObj) {
-    const result = await client.db("films").collection("listFilms")
-                        .updateOne({ rating: yargsObj.rating }, { $set: updatedRating });
+			// Build update fields
+			let update = {};
+			if (yargsObj.title) {
+				Object.assign(update, { title: yargsObj.title });
+			}
+			if (yargsObj.actor) {
+				Object.assign(update, { actor: yargsObj.actor });
+			}
+			if (yargsObj.rating) {
+				Object.assign(update, { rating: yargsObj.rating });
+			}
 
-    console.log(`rating, ${set.changes} document(s) matched the query criteria.`);
-    console.log(`rating, ${set.changes} document(s) was/were updated.`);
+			// Pass to update function
+			await updateFilm(criteria, update);
 
-    await updateFilmList(client, "Batman", { rating: 4, rating: 5 });
-}
+		} else if (yargsObj.delete) {
+			//Build Criteria
+			const criteria = { title: yargsObj.delete };
 
-// Delete
-async function deleteFilmList(yargsObj) {
-    const result = await client.db("film").collection("listFilms")
-            .deleteOne({ title: yargsObj.title });
-    console.log(`title, ${set.changes} document(s) was/were deleted.`);
+			// Pass to delete function
+			await deleteFilm(criteria);
+		} else {
+			// list the available options
+			console.log("incorrect command");
+		}
 
-    await deleteFilmList(client, "Kill Bill");
-}
+	} catch (error) {
+		console.log(error);
+	}
+};
 
 app(yargs.argv);
