@@ -9,13 +9,13 @@ const connection = async () => {
         await client.connect();
         console.log("success")
         const db = client.db("Films");
-        return db.collection("Films")
+        return db.collection("Films");
     } catch (error) {
         console.log(error);
     }
 };
 
-// use this fucntion to check the connection file
-// connection();
+// use this functon to check connection to db connection();
 
+// connection();
 module.exports = { connection, client };

@@ -1,42 +1,39 @@
 exports.addFilm = async (collection, filmObj) => {
     try {
-        // add database entry using built in method of insertOne
-        // and passing the filmObj entered by the user
-        const addEntry = await collection.insertOne(filmObj);
-        console.log(addEntry);
+      const addEntry = await collection.insertOne(filmObj);
+      console.log(addEntry);
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-};
-
-exports.listFilms = async (collection) => {
+  };
+  
+  exports.listFilms = async (collection) => {
     try {
-        const filmList = await collection.find().toArray();
-        console.log(filmList);
+      const filmList = await collection.find().toArray();
+      console.log(filmList);
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-};
-
-exports.updateFilm = async (collection, criteria, changes) => {
-    try {        
-        await collection.updateOne(criteria, { $set: changes });
-        console.log(updateFilmList);
+  };
+  
+  // create function for updating db entry
+  exports.editFilm = async (collection, theTitle, theEdits) => {
+    try {
+      const filmTitle = { title: theTitle };
+      const newData = { $set: { title: theEdits.title, actor: theEdits.actor } };
+      const editEntry = await collection.updateOne(filmTitle, newData);
+      console.log(editEntry);
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-};
-
-exports.deteleFilm = async (collection, criteria, changes) => {
-    try {        
-        await collection.deleteOne(criteria, { $set: changes });
-        console.log(updateFilmList);
+  };
+  
+  // create function to delete one or more db entries
+  exports.removeFilm = async (collection, filmObj) => {
+    try {
+      const deleteEntry = await collection.deleteOne(filmObj);
+      console.log(deleteEntry);
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-};
-
-
-// Create function for updating database entry
-
-// Create function to delete one more database entries.
+  };
